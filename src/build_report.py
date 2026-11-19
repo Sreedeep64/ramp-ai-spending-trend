@@ -328,8 +328,8 @@ def build_pdf(rows: list[dict[str, float | datetime]], metrics: dict[str, float 
     c.setFont("ArialBold", 8)
     c.drawString(55, 205, "VERDICT")
     verdict = (
-        "Buyers should plan for multiple providers. Some switching remains possible, but expansion fits better. "
-        "Ramp separately found 52% dual use."
+        "Buyers should plan for multiple providers. Switching remains possible; expansion fits better. "
+        "Microsoft's Oct. 28 launch supports plausibility, not cause."
     )
     paragraph(c, verdict, 55, 199, 500, 30, size=9, leading=11.2, color=WHITE)
 
@@ -352,7 +352,8 @@ def build_pdf(rows: list[dict[str, float | datetime]], metrics: dict[str, float 
         'Sources: <link href="https://ramp.com/data/ai-index"><u>Ramp AI Index</u></link>; '
         '<link href="https://fred.stlouisfed.org/release?rid=23"><u>FRED/Ramp series</u></link>; '
         '<link href="https://ramp.com/reports/2026-summer-spending-benchmarks"><u>Ramp Summer 2026 report</u></link>. '
-        "Monthly through Oct 2026; retrieved Nov 19. Adoption means an observed business payment."
+        '<link href="https://blogs.microsoft.com/blog/2026/10/28/introducing-the-microsoft-copilot-harness-unlocking-the-potential-of-truly-multi-model-agentic-work/"><u>Microsoft multi-model announcement</u></link>. '
+        "Monthly through Oct 2026. Adoption means an observed business payment."
     )
     paragraph(c, source, 42, 72, 340, 46, size=6.0, leading=7.3, color=MUTED)
 

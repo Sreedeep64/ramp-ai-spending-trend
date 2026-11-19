@@ -23,6 +23,8 @@ In October 2026, at least 50.3% of AI-paying Ramp businesses paid both Anthropic
 
 The script creates the one-page PDF, a 3:2 submission cover, and an analysis summary.
 
+The quantitative stress tests, competing-explanation predictions, and outside-source check are documented in [`analysis/mission_checks.md`](analysis/mission_checks.md).
+
 ## Sources
 
 - Ramp AI Index: https://ramp.com/data/ai-index
