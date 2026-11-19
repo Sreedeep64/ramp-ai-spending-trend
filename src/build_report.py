@@ -311,8 +311,8 @@ def build_pdf(rows: list[dict[str, float | datetime]], metrics: dict[str, float 
     c.setFont("ArialBold", 8)
     c.drawString(55, 205, "VERDICT")
     verdict = (
-        "The data cannot rule out some switching, but it fits multi-provider expansion better than a one-for-one migration. "
-        "Ramp's summer report independently found that 52% of businesses using either provider used both."
+        "Buyers should plan for a multi-provider portfolio. The data cannot rule out some switching, but expansion fits better than a one-for-one migration. "
+        "Ramp independently found 52% dual use."
     )
     paragraph(c, verdict, 55, 199, 500, 30, size=9, leading=11.2, color=WHITE)
 

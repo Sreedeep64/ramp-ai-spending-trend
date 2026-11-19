@@ -13,7 +13,11 @@ In October 2026, at least 50.3% of AI-paying Ramp businesses paid both Anthropic
    `https://fred.stlouisfed.org/graph/fredgraph.csv?id=RAMPAIALL,RAMPAIANTHROPIC,RAMPAIOPENAI`
 
 2. Save it as `data/ramp_ai_provider_adoption.csv`.
-3. Run:
+3. Install the two pinned dependencies:
+
+   `python3 -m pip install -r requirements.txt`
+
+4. Run:
 
    `python3 src/build_report.py`
 
