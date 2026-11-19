@@ -178,6 +178,17 @@ def draw_line_chart(
     c.setFillColor(MUTED)
     c.drawRightString(x + w, y + h - 9, "Monthly, Jan 2025-Oct 2026")
 
+    c.saveState()
+    c.setFont("Arial", 6.4)
+    c.setFillColor(MUTED)
+    c.translate(x + 6, (py0 + py1) / 2)
+    c.rotate(90)
+    c.drawCentredString(0, 0, "Adoption share (%)")
+    c.restoreState()
+    c.setFont("Arial", 6.4)
+    c.setFillColor(MUTED)
+    c.drawCentredString((px0 + px1) / 2, y - 1, "Month")
+
     c.setLineWidth(0.6)
     for tick in range(0, 61, 10):
         yy = py(tick)
@@ -255,12 +266,16 @@ def build_pdf(rows: list[dict[str, float | datetime]], metrics: dict[str, float 
     pdfmetrics.registerFont(TTFont("Arial", FONT_REGULAR))
     pdfmetrics.registerFont(TTFont("ArialBold", FONT_BOLD))
     c = canvas.Canvas(str(PDF_FILE), pagesize=LETTER)
-    c.setTitle("Anthropic's rise looks more like expansion than an OpenAI exodus")
+    finding_headline = (
+        f"At least {float(metrics['minimum_overlap_share']):.1f}% of AI-adopting Ramp businesses "
+        "paid both Anthropic and OpenAI in October."
+    )
+    c.setTitle(finding_headline)
     c.setAuthor("Sreedeep Reddy Dugasani")
     c.setSubject("Analysis of AI provider adoption using the Ramp AI Index")
     c.setCreator("Sreedeep Reddy Dugasani")
     width, height = LETTER
-    c.setTitle("Anthropic's rise looks more like expansion than an OpenAI exodus")
+    c.setTitle(finding_headline)
     c.setAuthor("Sreedeep Reddy Dugasani")
 
     c.setFillColor(colors.white)
@@ -272,15 +287,17 @@ def build_pdf(rows: list[dict[str, float | datetime]], metrics: dict[str, float 
     c.setFont("ArialBold", 7.2)
     c.drawString(51, 757, "RAMP AI INDEX  |  PROVIDER ADOPTION")
 
-    headline = "Anthropic's rise looks more like expansion than an OpenAI exodus"
-    paragraph(c, headline, 42, 741, 528, 74, size=24, leading=26, color=NAVY, bold=True)
+    paragraph(c, finding_headline, 42, 741, 528, 74, size=22.5, leading=24.5, color=NAVY, bold=True)
     deck = (
-        "Anthropic overtook OpenAI in paid business adoption, but OpenAI adoption held steady. "
-        "October's overlap implies that at least half of AI-paying firms paid both providers."
+        "Steady OpenAI adoption points to expansion, not a one-for-one exodus."
     )
     paragraph(c, deck, 42, 679, 528, 42, size=10.2, leading=13.2, color=MUTED)
 
     draw_line_chart(c, rows, metrics, 42, 385, 528, 244)
+    chart_source = (
+        'Source: <link href="https://ramp.com/data/ai-index"><u>Ramp Data (ramp.com/data)</u></link>, October 2026.'
+    )
+    paragraph(c, chart_source, 42, 380, 528, 12, size=6.2, leading=7.2, color=MUTED)
 
     box_y, box_h, gap = 238, 126, 12
     box_w = (528 - gap) / 2
@@ -291,8 +308,8 @@ def build_pdf(rows: list[dict[str, float | datetime]], metrics: dict[str, float 
     c.setFont("ArialBold", 8.2)
     c.drawString(55, box_y + box_h - 20, "EXPLANATION 1  |  PROVIDER SWITCHING")
     switching = (
-        "<b>Why it fits:</b> Anthropic passed OpenAI in May, and Ramp describes the category as having low lock-in and minimal switching costs.<br/><br/>"
-        "<b>What weakens it:</b> OpenAI adoption was 40.8% in January and 40.6% in October. A broad exodus should have pulled that rate down."
+        "<b>Supports it:</b> Anthropic passed OpenAI in May; Ramp reports low lock-in.<br/><br/>"
+        "<b>Weakens it:</b> OpenAI stayed near 41%; an exodus should reduce it."
     )
     paragraph(c, switching, 55, box_y + box_h - 31, box_w - 26, 88, size=8.1, leading=10.2, color=INK)
 
@@ -300,9 +317,9 @@ def build_pdf(rows: list[dict[str, float | datetime]], metrics: dict[str, float 
     c.setFont("ArialBold", 8.2)
     c.drawString(55 + box_w + gap, box_y + box_h - 20, "EXPLANATION 2  |  MULTI-PROVIDER EXPANSION")
     expansion = (
-        f"<b>Why it fits:</b> Overall adoption rose {float(metrics['overall_change']):.1f} points from January to October while OpenAI stayed flat. "
-        f"The minimum overlap was {float(metrics['minimum_overlap']):.1f} points, or at least {float(metrics['minimum_overlap_share']):.1f}% of AI adopters.<br/><br/>"
-        "<b>Best fit:</b> Firms appear to be adding Anthropic alongside OpenAI more often than replacing OpenAI outright."
+        f"<b>Supports it:</b> Overall adoption rose {float(metrics['overall_change']):.1f} points while OpenAI stayed flat; "
+        f"at least {float(metrics['minimum_overlap_share']):.1f}% paid both.<br/><br/>"
+        "<b>Best fit:</b> Firms added Anthropic alongside OpenAI."
     )
     paragraph(c, expansion, 55 + box_w + gap, box_y + box_h - 31, box_w - 26, 90, size=8.1, leading=10.2, color=INK)
 
@@ -311,8 +328,8 @@ def build_pdf(rows: list[dict[str, float | datetime]], metrics: dict[str, float 
     c.setFont("ArialBold", 8)
     c.drawString(55, 205, "VERDICT")
     verdict = (
-        "Buyers should plan for a multi-provider portfolio. The data cannot rule out some switching, but expansion fits better than a one-for-one migration. "
-        "Ramp independently found 52% dual use."
+        "Buyers should plan for multiple providers. Some switching remains possible, but expansion fits better. "
+        "Ramp separately found 52% dual use."
     )
     paragraph(c, verdict, 55, 199, 500, 30, size=9, leading=11.2, color=WHITE)
 
@@ -320,9 +337,8 @@ def build_pdf(rows: list[dict[str, float | datetime]], metrics: dict[str, float 
     c.setFont("ArialBold", 7.4)
     c.drawString(42, 148, "HOW THE LOWER BOUND WORKS")
     lower_bound = (
-        "Anthropic adoption + OpenAI adoption - all AI adoption = minimum overlap. "
-        "For October: 44.8% + 40.6% - 56.8% = 28.5% of all Ramp firms. "
-        "Dividing 28.5% by 56.8% means at least 50.3% of AI adopters paid both. Other AI vendors make this a lower bound, not an exact share."
+        "44.8% + 40.6% - 56.8% = 28.5% of Ramp firms, or 50.3% of AI adopters. "
+        "Other vendors make this a minimum, not an exact share."
     )
     paragraph(c, lower_bound, 42, 140, 528, 42, size=7.4, leading=9.2, color=MUTED)
 
@@ -333,9 +349,10 @@ def build_pdf(rows: list[dict[str, float | datetime]], metrics: dict[str, float 
     c.setFont("ArialBold", 6.8)
     c.drawString(42, 79, "SOURCE AND METHOD")
     source = (
-        "Sources: ramp.com/data/ai-index; fred.stlouisfed.org/release?rid=23; ramp.com/reports/2026-summer-spending-benchmarks. "
-        "Series RAMPAIALL, RAMPAIANTHROPIC, RAMPAIOPENAI; monthly data through Oct 2026; retrieved Nov 19, 2026. "
-        "Ramp defines adoption as the share of businesses with an observed payment for an AI product or service using card, invoice, and ACH transactions. "
+        'Sources: <link href="https://ramp.com/data/ai-index"><u>Ramp AI Index</u></link>; '
+        '<link href="https://fred.stlouisfed.org/release?rid=23"><u>FRED/Ramp series</u></link>; '
+        '<link href="https://ramp.com/reports/2026-summer-spending-benchmarks"><u>Ramp Summer 2026 report</u></link>. '
+        "Monthly through Oct 2026; retrieved Nov 19. Adoption means an observed business payment."
     )
     paragraph(c, source, 42, 72, 340, 46, size=6.0, leading=7.3, color=MUTED)
 
@@ -343,8 +360,7 @@ def build_pdf(rows: list[dict[str, float | datetime]], metrics: dict[str, float 
     c.setFont("ArialBold", 6.8)
     c.drawString(396, 79, "LIMITS")
     limits = (
-        "Payments show paid vendor relationships, not active usage. Free tools and personal accounts are missed. "
-        "Ramp businesses may not represent all U.S. firms, and historical estimates can be revised."
+        "Payments miss free and personal use. Ramp customers may not represent all U.S. firms; estimates can change."
     )
     paragraph(c, limits, 396, 72, 174, 44, size=6.3, leading=7.8, color=MUTED)
 
@@ -396,14 +412,14 @@ def build_cover(rows: list[dict[str, float | datetime]], metrics: dict[str, floa
     draw.rounded_rectangle((90, 70, 520, 120), radius=25, fill="#0C9A78")
     draw.text((118, 82), "RAMP AI INDEX  |  OCTOBER 2026", font=pil_font(23, True), fill="white")
 
-    headline = "Anthropic's rise looks more like expansion than an OpenAI exodus"
-    hfont = pil_font(72, True)
+    headline = f"At least {float(metrics['minimum_overlap_share']):.1f}% paid both Anthropic and OpenAI"
+    hfont = pil_font(68, True)
     lines = wrap_pil(draw, headline, hfont, 690)
     y = 170
     for line in lines:
         draw.text((90, y), line, font=hfont, fill="#F7FAFC")
         y += 82
-    deck = "At least half of AI-paying Ramp businesses paid both providers in October."
+    deck = "Among AI-adopting Ramp businesses in October - evidence of expansion, not an exodus."
     dfont = pil_font(31)
     for line in wrap_pil(draw, deck, dfont, 720):
         draw.text((92, y + 20), line, font=dfont, fill="#B9C8D5")
